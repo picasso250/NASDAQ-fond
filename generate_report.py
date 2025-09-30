@@ -62,14 +62,26 @@ try:
 
     # 读取TSV数据
     df = pd.read_csv(INPUT_FILE, sep='\t', encoding='utf-8')
-    print(f"步骤 1/4: 成功从 '{INPUT_FILE}' 读取 {len(df)} 条记录。")
+    print(f"步骤 1/5: 成功从 '{INPUT_FILE}' 读取 {len(df)} 条记录。")
+
+    # ==================== 新增的修改步骤 ====================
+    # 清理“基金规模(亿元)”列，去除括号及内部内容
+    # 我们使用 .str.split('（') 来按中文括号分割，并取第一部分
+    if '规模(亿元)' in df.columns:
+        # 确保列是字符串类型，然后进行处理
+        df['规模(亿元)'] = df['规模(亿元)'].astype(str).str.split('（').str[0]
+        print("步骤 2/5: 已清理'规模(亿元)'列的显示格式。")
+    else:
+        # 如果列名不存在，打印一个警告而不是报错
+        print("警告: 未找到 '规模(亿元)' 列，跳过清理步骤。")
+    # =======================================================
 
     # 将DataFrame转换为HTML表格字符串
     # index=False 避免写入行号
     # classes='fund-table' 用于链接我们的CSS样式
     # border=0 因为我们用CSS来定义更美观的边框
     html_table = df.to_html(index=False, classes='fund-table', border=0)
-    print("步骤 2/4: 已将数据转换为HTML表格格式。")
+    print("步骤 3/5: 已将数据转换为HTML表格格式。")
 
     # --- 计划第四步：组装完整的HTML文档 ---
 
@@ -96,7 +108,7 @@ try:
 </body>
 </html>
 """
-    print("步骤 3/4: 已将CSS样式和HTML表格组装成完整文档。")
+    print("步骤 4/5: 已将CSS样式和HTML表格组装成完整文档。")
 
     # --- 计划第五步：写入文件并完成 ---
 
@@ -106,7 +118,7 @@ try:
     
     # 获取生成文件的绝对路径以便用户点击
     absolute_path = os.path.abspath(OUTPUT_FILE)
-    print(f"步骤 4/4: HTML报告已成功生成！")
+    print(f"步骤 5/5: HTML报告已成功生成！")
     print(f"--> 文件位置: file://{absolute_path}")
     print("\n--- 任务完成 ---")
 
